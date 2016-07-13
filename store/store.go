@@ -43,6 +43,7 @@ type Store interface {
 	License() LicenseStore
 	PasswordRecovery() PasswordRecoveryStore
 	Emoji() EmojiStore
+	Status() StatusStore
 	MarkSystemRanUnitTests()
 	Close()
 	DropAllTables()
@@ -128,9 +129,6 @@ type UserStore interface {
 	Update(user *model.User, allowRoleUpdate bool) StoreChannel
 	UpdateLastPictureUpdate(userId string) StoreChannel
 	UpdateUpdateAt(userId string) StoreChannel
-	UpdateLastPingAt(userId string, time int64) StoreChannel
-	UpdateLastActivityAt(userId string, time int64) StoreChannel
-	UpdateUserAndSessionActivity(userId string, sessionId string, time int64) StoreChannel
 	UpdatePassword(userId, newPassword string) StoreChannel
 	UpdateAuthData(userId string, service string, authData *string, email string) StoreChannel
 	UpdateMfaSecret(userId, secret string) StoreChannel
@@ -153,7 +151,6 @@ type UserStore interface {
 	UpdateFailedPasswordAttempts(userId string, attempts int) StoreChannel
 	GetForExport(teamId string) StoreChannel
 	GetTotalUsersCount() StoreChannel
-	GetTotalActiveUsersCount() StoreChannel
 	GetSystemAdminProfiles() StoreChannel
 	PermanentDelete(userId string) StoreChannel
 	AnalyticsUniqueUserCount(teamId string) StoreChannel
@@ -266,4 +263,12 @@ type EmojiStore interface {
 	GetByName(name string) StoreChannel
 	GetAll() StoreChannel
 	Delete(id string, time int64) StoreChannel
+}
+
+type StatusStore interface {
+	SaveOrUpdate(status *model.Status) StoreChannel
+	Get(userId string) StoreChannel
+	GetOnlineAway() StoreChannel
+	ResetAll() StoreChannel
+	GetTotalActiveUsersCount() StoreChannel
 }
